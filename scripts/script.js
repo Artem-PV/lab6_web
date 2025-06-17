@@ -1,79 +1,79 @@
-const swiper = new Swiper('.love-us-slider', {
-    slidesPerView: 3,
-    spaceBetween: 0,
-    initialSlide: 1,
-    centeredSlides: true,
-    loop: true,
-    resistanceRatio: 0,
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-    },
-    breakpoints: {
-        1440: {
-            slidesPerView: 3.7
-        },
-        393: {
-            slidesPerView: 1
-        },
-        0: {
-            slidesPerView: 1
-        }
+document.addEventListener('DOMContentLoaded', function () {
+    const authModal = document.getElementById('auth-modal');
+    const closeBtn = authModal.querySelector('.modal-close');
+    const tabLinks = authModal.querySelectorAll('.tab-link');
+    const formContents = authModal.querySelectorAll('.form-content');
+
+    function switchTab(formType) {
+        tabLinks.forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.form === formType);
+        });
+        formContents.forEach(content => {
+            content.classList.toggle('active', content.id === `${formType}-content`);
+        });
     }
-});
-window.addEventListener('resize', () => {
-        swiper.update();
+
+    function openModal(initialForm) {
+        switchTab(initialForm);
+        authModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     }
-);
-function closeModal() {
-    document.getElementById('login-modal').style.display = 'none';
-    document.getElementById('signup-modal').style.display = 'none';
-}
 
-document.querySelector('.sign-in').addEventListener('click', function (e) {
-    e.preventDefault();
-    document.getElementById('login-modal').style.display = 'flex';
-    document.getElementById('signup-modal').style.display = 'none';
-});
-
-document.querySelector('.sign-up').addEventListener('click', function (e) {
-    e.preventDefault();
-    document.getElementById('signup-modal').style.display = 'flex';
-    document.getElementById('login-modal').style.display = 'none';
-});
-
-window.addEventListener('click', function (e) {
-    if (e.target.classList.contains('modal-overlay')) {
-        closeModal();
+    function closeModal() {
+        authModal.style.display = 'none';
+        document.body.style.overflow = '';
     }
-});
 
-document.getElementById('form-login').addEventListener('submit', submitForm);
-document.getElementById('form-signup').addEventListener('submit', submitForm);
-
-function submitForm(e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    fetch('index.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Сохраняем в localStorage
-            localStorage.setItem('user', JSON.stringify(data.user));
-            alert('Успешно!');
-            closeModal();
-        } else {
-            alert('Ошибка: ' + data.message);
-        }
-    })
-    .catch(err => {
-        alert('Серверная ошибка.');
-        console.error(err);
+    document.querySelectorAll('.sign-in').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+            openModal('login');
+        });
     });
-}
+
+    document.querySelectorAll('.sign-up').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+            openModal('signup');
+        });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    authModal.addEventListener('click', e => {
+        if (e.target === authModal) closeModal();
+    });
+
+    authModal.querySelector('.modal-tabs').addEventListener('click', e => {
+        if (e.target.classList.contains('tab-link')) {
+            switchTab(e.target.dataset.form);
+        }
+    });
+
+    function submitForm(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+
+        fetch('index.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                localStorage.setItem('user', JSON.stringify(data.user));
+                alert('Успешно!');
+                closeModal();
+            } else {
+                alert('Ошибка: ' + data.message);
+            }
+        })
+        .catch(err => {
+            alert('Произошла ошибка. Попробуйте позже.');
+            console.error(err);
+        });
+    }
+
+    document.getElementById('form-login').addEventListener('submit', submitForm);
+    document.getElementById('form-signup').addEventListener('submit', submitForm);
+});
