@@ -1,0 +1,26 @@
+[
+    {
+        "username": "1111",
+        "password": "1111@gmail.com",
+        "email": "1111@gmail.com",
+        "timestamp": "2025-06-04 09:01:48"
+    },
+    {
+        "username": "artem",
+        "password": "artem@gmail.com",
+        "email": "artem@gmail.com",
+        "timestamp": "2025-06-04 10:03:51"
+    },
+    {
+        "username": "artem2",
+        "password": "333",
+        "email": "artem2@gmail.com",
+        "timestamp": "2025-06-09 08:59:37"
+    },
+    {
+        "username": "artem3",
+        "password": "222",
+        "email": "artem3@gmail.com",
+        "timestamp": "2025-06-09 09:03:37"
+    }
+]
